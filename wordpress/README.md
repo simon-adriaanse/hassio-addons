@@ -8,9 +8,9 @@ Wordpress for Homeassistant OS
 
 ## About
 
+This repository contains WordPress resources, themes, plugins, and custom development tools. Whether you're building a new site or enhancing an existing one, you'll find useful code, configurations, and best practices here. 
 
-
-
+🔗 [WordPress Documentation](https://developer.wordpress.org/)
 
 ## Installation
 
