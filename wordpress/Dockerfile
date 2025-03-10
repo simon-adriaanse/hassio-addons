@@ -10,7 +10,12 @@ ENV \
     PIP_BREAK_SYSTEM_PACKAGES=1 \
     PYTHONUNBUFFERED=1
 
-# Install required dependencies
+# persistent dependencies
+RUN set -eux; \
+	apk add -U --no-cache ghostscript; \
+	rm -rf /var/lib/apt/lists/*
+
+# install the PHP extensions we need (https://make.wordpress.org/hosting/handbook/handbook/server-environment/#php-extensions)
 RUN apk add -U --no-cache \
     apache2 \
     php8 \
@@ -52,7 +57,6 @@ RUN apk add -U --no-cache \
     wget \
     openssl \
     ca-certificates \
-    ghostscript \
     libavif-dev \
     libfreetype6-dev \
     libicu-dev \
