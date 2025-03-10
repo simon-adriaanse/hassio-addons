@@ -4,8 +4,6 @@
 
 Wordpress for Homeassistant OS
 
-![Ingress Support](../_images/apache2/ingress.png)
-
 ## About
 
 This repository contains WordPress resources, themes, plugins, and custom development tools. Whether you're building a new site or enhancing an existing one, you'll find useful code, configurations, and best practices here. 
