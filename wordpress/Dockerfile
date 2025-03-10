@@ -11,7 +11,7 @@ ENV \
     PYTHONUNBUFFERED=1
 
 # Install required dependencies
-RUN apk add --no-cache \
+RUN apk add -U --no-cache \
     apache2 \
     php8 \
     php8-apache2 \
