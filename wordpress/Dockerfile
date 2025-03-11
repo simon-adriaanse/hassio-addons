@@ -25,14 +25,14 @@ ENV HTTPD_SHA256=88fc236ab99b2864b248de7d49a008ec2afd7551e64dce8b95f58f32f94c46a
 ENV HTTPD_PATCHES=""
 
 COPY docker-php-ext-* docker-php-entrypoint docker-php-source /usr/local/bin
+RUN chmod +x /usr/local/bin/docker-php-ext-* \
+	chmod +x /usr/local/bin/docker-php-source \
+	chmod +x /usr/local/bin/docker-php-entrypoint
 RUN mkdir /run/apache2
-
-
 
 # persistent dependencies
 RUN set -eux; \
-	apk add -U --no-cache ghostscript; \
-	rm -rf /var/lib/apt/lists/*
+	apk add -U --no-cache ghostscript;
 
 # install the PHP extensions we need (https://make.wordpress.org/hosting/handbook/handbook/server-environment/#php-extensions)
 RUN apk --no-cache --repository https://dl-cdn.alpinelinux.org/alpine/edge/main add \
@@ -161,21 +161,6 @@ RUN apk --no-cache --repository https://dl-cdn.alpinelinux.org/alpine/edge/commu
 	\
 	extDir="$(php -r 'echo ini_get("extension_dir");')"; \
 	[ -d "$extDir" ]; \
-# reset apt-mark's "manual" list so that "purge --auto-remove" will remove all build dependencies
-	apt-mark auto '.*' > /dev/null; \
-	apt-mark manual $savedAptMark; \
-	ldd "$extDir"/*.so \
-		| awk '/=>/ { so = $(NF-1); if (index(so, "/usr/local/") == 1) { next }; gsub("^/(usr/)?", "", so); printf "*%s\n", so }' \
-		| sort -u \
-		| xargs -r dpkg-query --search \
-		| cut -d: -f1 \
-		| sort -u \
-		| xargs -rt apt-mark manual; \
-	\
-	apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false; \
-	rm -rf /var/lib/apt/lists/*; \
-	\
-	! { ldd "$extDir"/*.so | grep 'not found'; }; \
 # check for output like "PHP Warning:  PHP Startup: Unable to load dynamic library 'foo' (tried: ...)
 	err="$(php --version 3>&1 1>&2 2>&3)"; \
 	[ -z "$err" ]
