@@ -14,8 +14,8 @@ ENV \
 
 ENV HTTPD_PREFIX=/usr/local/apache2
 ENV PATH=$HTTPD_PREFIX/bin:$PATH
-RUN mkdir -p "$HTTPD_PREFIX" 
-#	&& chown www-data:www-data "$HTTPD_PREFIX"
+RUN mkdir -p "$HTTPD_PREFIX"
+#	&& chown apache:apache "$HTTPD_PREFIX"
 WORKDIR $HTTPD_PREFIX
 
 ENV HTTPD_VERSION=2.4.63
@@ -24,10 +24,23 @@ ENV HTTPD_SHA256=88fc236ab99b2864b248de7d49a008ec2afd7551e64dce8b95f58f32f94c46a
 # https://httpd.apache.org/security/vulnerabilities_24.html
 ENV HTTPD_PATCHES=""
 
-COPY docker-php-ext-* docker-php-entrypoint docker-php-source /usr/local/bin
-RUN chmod +x /usr/local/bin/docker-php-ext-* \
-	chmod +x /usr/local/bin/docker-php-source \
+COPY docker-php-ext-configure /usr/local/bin
+COPY docker-php-ext-enable /usr/local/bin
+COPY docker-php-ext-install /usr/local/bin
+COPY docker-php-entrypoint /usr/local/bin
+COPY docker-php-source /usr/local/bin
+
+RUN set -eux; \
+	chmod +x /usr/local/bin/docker-php-ext-configure
+RUN set -eux; \
+	chmod +x /usr/local/bin/docker-php-ext-enable
+RUN set -eux; \
+	chmod +x /usr/local/bin/docker-php-ext-install
+RUN set -eux; \
+	chmod +x /usr/local/bin/docker-php-source
+RUN set -eux; \
 	chmod +x /usr/local/bin/docker-php-entrypoint
+	
 RUN mkdir /run/apache2
 
 # persistent dependencies
