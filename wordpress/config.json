@@ -5,6 +5,7 @@
   "description": "OpenSource Website building tool",
   "url": "https://github.com/simon-adriaanse/hassio-addons/tree/master/wordpress",
   "arch": ["armhf", "armv7", "aarch64", "amd64", "i386"],
+  "image": "ghcr.io/simon-adriaanse/wordpress-{arch}",
   "startup": "application",
   "boot": "auto",
   "webui": "[PROTO:ssl]://[HOST]:[PORT:80]",
