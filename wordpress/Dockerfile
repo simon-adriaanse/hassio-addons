@@ -153,7 +153,6 @@ RUN apk --no-cache --repository https://dl-cdn.alpinelinux.org/alpine/edge/commu
 	docker-php-ext-install /tmp/imagick-3.7.0; \
 	rm -rf imagick.tgz /tmp/imagick-3.7.0; \
 	\
-	
 # some misbehaving extensions end up outputting to stdout 🙈 (https://github.com/docker-library/wordpress/issues/669#issuecomment-993945967)
 	out="$(php -r 'exit(0);')"; \
 	[ -z "$out" ]; \
@@ -181,20 +180,17 @@ RUN apk --no-cache --repository https://dl-cdn.alpinelinux.org/alpine/edge/commu
 	err="$(php --version 3>&1 1>&2 2>&3)"; \
 	[ -z "$err" ]
 
-# RUN mkdir -p /usr/local/etc/php/conf.d && \
-# 	touch /usr/local/etc/php/conf.d/opcache-recommended.ini && \
-# 	touch /usr/local/etc/php/conf.d/error-logging.ini
-
 # set recommended PHP.ini settings
 # see https://secure.php.net/manual/en/opcache.installation.php
 RUN set -eux; \
-	docker-php-ext-enable opcache; \
+	docker-php-ext-enable opcache;
+RUN set -eux; \
 	{ \
 		echo 'opcache.memory_consumption=128'; \
 		echo 'opcache.interned_strings_buffer=8'; \
 		echo 'opcache.max_accelerated_files=4000'; \
 		echo 'opcache.revalidate_freq=2'; \
-	} > /etc/php83/conf.d/opcache-recommended.ini
+	} > /etc/php83/conf.d/00-opcache-recommended.ini
 # https://wordpress.org/support/article/editing-wp-config-php/#configure-error-logging
 
 RUN { \
@@ -230,12 +226,6 @@ RUN set -eux; \
 # https://github.com/docker-library/wordpress/issues/383#issuecomment-507886512
 # (replace all instances of "%h" with "%a" in LogFormat)
 	find /etc/apache2 -type f -name '*.conf' -exec sed -ri 's/([[:space:]]*LogFormat[[:space:]]+"[^"]*)%h([^"]*")/\1%a\2/g' '{}' +
-
-
-
-
-
-
 
 RUN set -eux; \
 	version='6.7.2'; \
