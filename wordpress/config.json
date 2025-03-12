@@ -1,6 +1,6 @@
 {
   "name": "Wordpress",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "slug": "wordpress",
   "description": "OpenSource Website building tool",
   "url": "https://github.com/simon-adriaanse/hassio-addons/tree/master/wordpress",
