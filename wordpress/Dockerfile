@@ -4,7 +4,7 @@ FROM ${BUILD_FROM}
 RUN apk add --no-cache bash curl less vim nginx ca-certificates git tzdata zip \
     libmcrypt-dev zlib-dev gmp-dev \
     freetype-dev libjpeg-turbo-dev libpng-dev \
-    php84-fpm php84-json php84-zlib php84-xml php84-xmlwriter php84-simplexml php84-pdo php84-phar php84-openssl \
+    php84 php84-fpm php84-json php84-zlib php84-xml php84-xmlwriter php84-simplexml php84-pdo php84-phar php84-openssl \
     php84-pdo_mysql php84-mysqli php84-session \
     php84-gd php84-iconv php84-gmp php84-zip \
     php84-curl php84-opcache php84-ctype php84-apcu \
