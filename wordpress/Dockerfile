@@ -1,7 +1,7 @@
 ARG BUILD_FROM=ghcr.io/hassio-addons/base:17.2.1
 FROM ${BUILD_FROM}
 
-RUN apk add --no-cache bash curl less vim nginx ca-certificates git tzdata zip \
+RUN apk add --no-cache bash curl less vim nginx ca-certificates git tzdata zip openssl openssl-dev \
     libmcrypt-dev zlib-dev gmp-dev \
     freetype-dev libjpeg-turbo-dev libpng-dev \
     php84 php84-fpm php84-json php84-zlib php84-xml php84-xmlwriter php84-simplexml php84-pdo php84-phar php84-openssl \
@@ -25,12 +25,19 @@ COPY files/php-fpm.conf /etc/php84/
 RUN curl -o /usr/bin/wp-cli https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar && chmod +x /usr/bin/wp-cli && chown nginx:nginx /usr/bin/wp-cli
 
 # Define the volume and set working directory
-VOLUME ["/var/www/html"]
-WORKDIR /var/www/html
+VOLUME ["/usr/html"]
+WORKDIR /usr/html
 
 # Copy data for the add-on
 COPY run.sh /
 RUN chmod a+x /run.sh
+
+COPY index.html /
+RUN chmod a+x /index.html
+
+# Expose ports
+EXPOSE 80
+
 
 # Define the command to run when the container starts
 CMD [ "/run.sh" ]

@@ -1,6 +1,6 @@
 {
   "name": "Wordpress",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "slug": "wordpress",
   "description": "OpenSource Website building tool",
   "url": "https://github.com/simon-adriaanse/hassio-addons/tree/master/wordpress",
@@ -10,6 +10,31 @@
   "ingress": true,
   "init": false,
   "panel_icon": "mdi:web-box",
+  "options": {
+    "document_root": "/share/htdocs",
+    "php_ini": "default",
+    "default_conf": "default",
+    "default_ssl_conf": "default",
+    "website_name": null,
+    "ssl": true,
+    "certfile": "fullchain.pem",
+    "keyfile": "privkey.pem",
+    "init_commands": []
+  },
+  "schema": {
+    "document_root": "str",
+    "php_ini": "str",
+    "default_conf": "str",
+    "default_ssl_conf": "str",
+    "website_name": "str",
+    "username": "str?",
+    "password": "password?",
+    "ssl": "bool",
+    "certfile": "str",
+    "keyfile": "str",
+    "init_commands":
+      "str?"
+  },
   "ports": {
     "80/tcp": 80,
     "443": 443

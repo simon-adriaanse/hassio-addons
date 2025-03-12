@@ -1,7 +1,17 @@
 #!/usr/bin/with-contenv bashio
 #!/bin/sh
-
-[ -f /run-pre.sh ] && /run-pre.sh
+ssl=$(bashio::config 'ssl')
+website_name=$(bashio::config 'website_name')
+certfile=$(bashio::config 'certfile')
+keyfile=$(bashio::config 'keyfile')
+DocumentRoot=$(bashio::config 'document_root')
+phpini=$(bashio::config 'php_ini')
+username=$(bashio::config 'username')
+password=$(bashio::config 'password')
+default_conf=$(bashio::config 'default_conf')
+default_ssl_conf=$(bashio::config 'default_ssl_conf')
+webrootdocker=/var/www/localhost/htdocs/
+phppath=/etc/php84/php.ini
 
 if [ ! -d /usr/html ]; then
 	echo "[i] Creating directories..."
@@ -13,13 +23,14 @@ else
 	chown -R nginx:nginx /usr/html
 fi
 
+mv /index.html /usr/html/index.html
+
 chown -R nginx:www-data /usr/html
 
 # start php-fpm
 echo "[i] Start php-fpm..."
 mkdir -p /usr/logs/php-fpm
 php-fpm84
-
 
 # install Wordpress
 mkdir -p /usr/src
@@ -48,7 +59,6 @@ echo "# END WordPress" >> /usr/src/wordpress/.htaccess
 chown -R nginx:www-data /usr/src/wordpress;
 # pre-create wp-content (and single-level children) for folks who want to bind-mount themes, etc so permissions are pre-created properly instead of root:root
 # wp-content/cache: https://github.com/docker-library/wordpress/issues/534#issuecomment-705733507
-# cd /usr/src/wordpress
 
 mkdir wp-content;
 for dir in /usr/src/wordpress/wp-content/*/ cache; do
