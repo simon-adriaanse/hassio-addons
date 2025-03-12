@@ -1,230 +1,36 @@
 ARG BUILD_FROM=ghcr.io/hassio-addons/base:17.2.1
-# hadolint ignore=DL3006
 FROM ${BUILD_FROM}
 
-ARG PHP_INI_DIR=/etc/php84
-# Environment variables
-ENV \
-    CARGO_NET_GIT_FETCH_WITH_CLI=true \
-    HOME="/root" \
-    LANG="C.UTF-8" \
-    PIP_BREAK_SYSTEM_PACKAGES=1 \
-    PYTHONUNBUFFERED=1 \
-	PHP_INI_DIR=${PHP_INI_DIR}
+RUN apk add --no-cache bash curl less vim nginx ca-certificates git tzdata zip \
+    libmcrypt-dev zlib-dev gmp-dev \
+    freetype-dev libjpeg-turbo-dev libpng-dev \
+    php84-fpm php84-json php84-zlib php84-xml php84-xmlwriter php84-simplexml php84-pdo php84-phar php84-openssl \
+    php84-pdo_mysql php84-mysqli php84-session \
+    php84-gd php84-iconv php84-gmp php84-zip \
+    php84-curl php84-opcache php84-ctype php84-apcu \
+    php84-intl php84-bcmath php84-dom php84-mbstring php84-xmlreader mysql-client curl && \
+    rm -rf /var/cache/apk/*
 
-COPY docker-php-ext-configure /usr/local/bin
-COPY docker-php-ext-enable /usr/local/bin
-COPY docker-php-ext-install /usr/local/bin
-COPY docker-php-entrypoint /usr/local/bin
-COPY docker-php-source /usr/local/bin
+RUN sed -i 's/;cgi.fix_pathinfo=1/cgi.fix_pathinfo=0/g' /etc/php84/php.ini && \
+    sed -i 's/expose_php = On/expose_php = Off/g' /etc/php84/php.ini && \
+    sed -i "s/nginx:x:100:101:nginx:\/var\/lib\/nginx:\/sbin\/nologin/nginx:x:100:101:nginx:\/usr:\/bin\/bash/g" /etc/passwd && \
+    sed -i "s/nginx:x:100:101:nginx:\/var\/lib\/nginx:\/sbin\/nologin/nginx:x:100:101:nginx:\/usr:\/bin\/bash/g" /etc/passwd- && \
+    ln -s /sbin/php-fpm7 /sbin/php-fpm
 
-RUN set -eux; \
-	chmod +x /usr/local/bin/docker-php-ext-configure
-RUN set -eux; \
-	chmod +x /usr/local/bin/docker-php-ext-enable
-RUN set -eux; \
-	chmod +x /usr/local/bin/docker-php-ext-install
-RUN set -eux; \
-	chmod +x /usr/local/bin/docker-php-source
-RUN set -eux; \
-	chmod +x /usr/local/bin/docker-php-entrypoint
+# Copy nginx and php-fpm configuration files
+COPY files/nginx.conf /etc/nginx/
+COPY files/php-fpm.conf /etc/php84/
 
-# persistent dependencies
-RUN set -eux; \
-	apk add -U --no-cache ghostscript;
+# Install WP-CLI
+RUN curl -o /usr/bin/wp-cli https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar && chmod +x /usr/bin/wp-cli && chown nginx:nginx /usr/bin/wp-cli
 
-# install the PHP extensions we need (https://make.wordpress.org/hosting/handbook/handbook/server-environment/#php-extensions)
-RUN apk --no-cache --repository https://dl-cdn.alpinelinux.org/alpine/edge/main add \
-    icu-libs \
-    && apk --no-cache --repository https://dl-cdn.alpinelinux.org/alpine/edge/community add \
-    # Current packages don't exist in other repositories
-		libavif \
-		gnu-libiconv \
-    # Packages
-		tini \
-		php84-common \
-		php84-xmlreader \
-		php84-bcmath \
-		php84-openssl \
-		php84-pcntl \
-		php84-xsl \
-		php84-zlib \
-		php84-sodium \
-		# Iconv Fix
-		php84-pecl-apcu \
-    && ln -sf /usr/bin/php84 /usr/bin/php
+# Define the volume and set working directory
+VOLUME ["/var/www/html"]
+WORKDIR /var/www/html
 
-# Install apache2.
-RUN apk --no-cache add \
-		ca-certificates \
-		openssl-dev \
-		pcre-dev \
-		apache2-proxy
+# Copy data for the add-on
+COPY run.sh /
+RUN chmod a+x /run.sh
 
-RUN apk --no-cache --repository https://dl-cdn.alpinelinux.org/alpine/edge/community add \
-		freetype-dev \
-		libjpeg-turbo-dev \
-		oniguruma-dev \
-		zip \
-		unzip \
-		tzdata \
-		shadow \
-		gcc \
-		g++ \
-		make \
-		autoconf \
-		dpkg-dev \
-		pkgconf \
-		libc-dev \
-		libstdc++ \
-		bash \
-		coreutils \
-		curl \
-		git \
-		wget \
-		libavif-dev \
-		icu-dev \
-		jpeg-dev \
-		libjpeg-turbo-dev \
-		imagemagick-dev \
-		libpng-dev \
-		libwebp-dev \
-		libzip-dev \
-	; \
-	docker-php-ext-configure gd \
-		--with-avif \
-		--with-freetype \
-		--with-jpeg \
-		--with-webp \
-	; \
-	docker-php-ext-install -j "$(nproc)" \
-		bcmath \
-		exif \
-		gd \
-		intl \
-		mysqli \
-		zip \
-	; \
-# sodium was built as a shared module (so that it can be replaced later if so desired), so let's enable it too (https://github.com/docker-library/php/issues/598)
-	docker-php-ext-enable sodium \
-	\
-# https://pecl.php.net/package/imagick
-# https://github.com/Imagick/imagick/commit/5ae2ecf20a1157073bad0170106ad0cf74e01cb6 (causes a lot of build failures, but strangely only intermittent ones 🤔)
-# see also https://github.com/Imagick/imagick/pull/641
-# this is "pecl install imagick-3.7.0", but by hand so we can apply a small hack / part of the above commit
-	curl -fL -o imagick.tgz 'https://pecl.php.net/get/imagick-3.7.0.tgz'; \
-	echo '5a364354109029d224bcbb2e82e15b248be9b641227f45e63425c06531792d3e *imagick.tgz' | sha256sum -c -; \
-	tar --extract --directory /tmp --file imagick.tgz imagick-3.7.0; \
-	grep '^//#endif$' /tmp/imagick-3.7.0/Imagick.stub.php; \
-	test "$(grep -c '^//#endif$' /tmp/imagick-3.7.0/Imagick.stub.php)" = '1'; \
-	sed -i -e 's!^//#endif$!#endif!' /tmp/imagick-3.7.0/Imagick.stub.php; \
-	grep '^//#endif$' /tmp/imagick-3.7.0/Imagick.stub.php && exit 1 || :; \
-	docker-php-ext-install /tmp/imagick-3.7.0; \
-	rm -rf imagick.tgz /tmp/imagick-3.7.0; \
-	\
-# some misbehaving extensions end up outputting to stdout 🙈 (https://github.com/docker-library/wordpress/issues/669#issuecomment-993945967)
-	out="$(php -r 'exit(0);')"; \
-	[ -z "$out" ]; \
-	err="$(php -r 'exit(0);' 3>&1 1>&2 2>&3)"; \
-	[ -z "$err" ]; \
-	\
-	extDir="$(php -r 'echo ini_get("extension_dir");')"; \
-	[ -d "$extDir" ]; \
-# check for output like "PHP Warning:  PHP Startup: Unable to load dynamic library 'foo' (tried: ...)
-	err="$(php --version 3>&1 1>&2 2>&3)"; \
-	[ -z "$err" ]
-
-# set recommended PHP.ini settings
-# see https://secure.php.net/manual/en/opcache.installation.php
-RUN set -eux; \
-	docker-php-ext-enable opcache;
-RUN set -eux; \
-	{ \
-		echo 'opcache.memory_consumption=128'; \
-		echo 'opcache.interned_strings_buffer=8'; \
-		echo 'opcache.max_accelerated_files=4000'; \
-		echo 'opcache.revalidate_freq=2'; \
-	} > /etc/php84/conf.d/00-opcache-recommended.ini
- 
-# https://wordpress.org/support/article/editing-wp-config-php/#configure-error-logging
-RUN { \
-# https://www.php.net/manual/en/errorfunc.constants.php
-# https://github.com/docker-library/wordpress/issues/420#issuecomment-517839670
-		echo 'error_reporting = E_ERROR | E_WARNING | E_PARSE | E_CORE_ERROR | E_CORE_WARNING | E_COMPILE_ERROR | E_COMPILE_WARNING | E_RECOVERABLE_ERROR'; \
-		echo 'display_errors = Off'; \
-		echo 'display_startup_errors = Off'; \
-		echo 'log_errors = On'; \
-		echo 'error_log = /dev/stderr'; \
-		echo 'log_errors_max_len = 1024'; \
-		echo 'ignore_repeated_errors = On'; \
-		echo 'ignore_repeated_source = Off'; \
-		echo 'html_errors = Off'; \
-	} > /etc/php84/conf.d/error-logging.ini
-
-# Enable mod_rewrite (or any other module)
-RUN sed -i '/LoadModule rewrite_module/s/^#//g' /etc/apache2/httpd.conf
-RUN sed -i '/LoadModule expires_module/s/^#//g' /etc/apache2/httpd.conf
-RUN sed -i '/LoadModule remoteip_module/s/^#//g' /etc/apache2/httpd.conf
-
-RUN set -eux; \
-	{ \
-		echo 'RemoteIPHeader X-Forwarded-For'; \
-# these IP ranges are reserved for "private" use and should thus *usually* be safe inside Docker
-		echo 'RemoteIPInternalProxy 10.0.0.0/8'; \
-		echo 'RemoteIPInternalProxy 172.16.0.0/12'; \
-		echo 'RemoteIPInternalProxy 192.168.0.0/16'; \
-		echo 'RemoteIPInternalProxy 169.254.0.0/16'; \
-		echo 'RemoteIPInternalProxy 127.0.0.0/8'; \
-	} > /etc/apache2/conf.d/remoteip.conf; \
-	\
-# https://github.com/docker-library/wordpress/issues/383#issuecomment-507886512
-# (replace all instances of "%h" with "%a" in LogFormat)
-	find /etc/apache2 -type f -name '*.conf' -exec sed -ri 's/([[:space:]]*LogFormat[[:space:]]+"[^"]*)%h([^"]*")/\1%a\2/g' '{}' +
-
-RUN set -eux; \
-	version='6.7.2'; \
-	sha1='ff727df89b694749e91e357dc2329fac620b3906'; \
-	\
-	curl -o wordpress.tar.gz -fL "https://wordpress.org/wordpress-$version.tar.gz"; \
-	echo "$sha1 *wordpress.tar.gz" | sha1sum -c -; \
-	\
-# upstream tarballs include ./wordpress/ so this gives us /usr/src/wordpress
-	tar -xzf wordpress.tar.gz -C /usr/src/; \
-	rm wordpress.tar.gz; \
-	\
-# https://wordpress.org/support/article/htaccess/
-	[ ! -e /usr/src/wordpress/.htaccess ]; \
-	{ \
-		echo '# BEGIN WordPress'; \
-		echo ''; \
-		echo 'RewriteEngine On'; \
-		echo 'RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]'; \
-		echo 'RewriteBase /'; \
-		echo 'RewriteRule ^index\.php$ - [L]'; \
-		echo 'RewriteCond %{REQUEST_FILENAME} !-f'; \
-		echo 'RewriteCond %{REQUEST_FILENAME} !-d'; \
-		echo 'RewriteRule . /index.php [L]'; \
-		echo ''; \
-		echo '# END WordPress'; \
-	} > /usr/src/wordpress/.htaccess; \
-	\
-	chown -R apache:apache /usr/src/wordpress; \
-# pre-create wp-content (and single-level children) for folks who want to bind-mount themes, etc so permissions are pre-created properly instead of root:root
-# wp-content/cache: https://github.com/docker-library/wordpress/issues/534#issuecomment-705733507
-	mkdir wp-content; \
-	for dir in /usr/src/wordpress/wp-content/*/ cache; do \
-		dir="$(basename "${dir%/}")"; \
-		mkdir "wp-content/$dir"; \
-	done; \
-	chown -R apache:apache wp-content; \
-	chmod -R 1777 wp-content
-
-
-# TODO CHECK THIS
-#ENTRYPOINT ["docker-php-entrypoint"]
-
-# Expose ports
-EXPOSE 80
-
-# Start Apache
-CMD ["httpd", "-D", "FOREGROUND"]
+# Define the command to run when the container starts
+CMD [ "/run.sh" ]
