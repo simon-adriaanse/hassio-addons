@@ -2,7 +2,7 @@ ARG BUILD_FROM=ghcr.io/hassio-addons/base:17.2.1
 # hadolint ignore=DL3006
 FROM ${BUILD_FROM}
 
-ARG PHP_INI_DIR=/etc/php83
+ARG PHP_INI_DIR=/etc/php84
 # Environment variables
 ENV \
     CARGO_NET_GIT_FETCH_WITH_CLI=true \
@@ -11,18 +11,6 @@ ENV \
     PIP_BREAK_SYSTEM_PACKAGES=1 \
     PYTHONUNBUFFERED=1 \
 	PHP_INI_DIR=${PHP_INI_DIR}
-
-ENV HTTPD_PREFIX=/usr/local/apache2
-ENV PATH=$HTTPD_PREFIX/bin:$PATH
-RUN mkdir -p "$HTTPD_PREFIX"
-#	&& chown apache:apache "$HTTPD_PREFIX"
-WORKDIR $HTTPD_PREFIX
-
-ENV HTTPD_VERSION=2.4.63
-ENV HTTPD_SHA256=88fc236ab99b2864b248de7d49a008ec2afd7551e64dce8b95f58f32f94c46ab
-
-# https://httpd.apache.org/security/vulnerabilities_24.html
-ENV HTTPD_PATCHES=""
 
 COPY docker-php-ext-configure /usr/local/bin
 COPY docker-php-ext-enable /usr/local/bin
@@ -40,8 +28,6 @@ RUN set -eux; \
 	chmod +x /usr/local/bin/docker-php-source
 RUN set -eux; \
 	chmod +x /usr/local/bin/docker-php-entrypoint
-	
-RUN mkdir /run/apache2
 
 # persistent dependencies
 RUN set -eux; \
@@ -56,59 +42,29 @@ RUN apk --no-cache --repository https://dl-cdn.alpinelinux.org/alpine/edge/main 
 		gnu-libiconv \
     # Packages
 		tini \
-		php83 \
-		php83-mysqli \
-		php83-json \
-		php83-pdo_mysql \
-		php83-simplexml \
-		php83-dev \
-		php83-common \
-		php83-gd \
-		php83-xmlreader \
-		php83-bcmath \
-		php83-ctype \
-		php83-curl \
-		php83-exif \
-		php83-iconv \
-		php83-intl \
-		php83-mbstring \
-		php83-opcache \
-		php83-openssl \
-		php83-pcntl \
-		php83-phar \
-		php83-session \
-		php83-xml \
-		php83-xsl \
-		php83-zip \
-		php83-zlib \
-		php83-dom \
-		php83-fpm \
-		php83-sodium \
-		php83-tokenizer \
+		php84-common \
+		php84-xmlreader \
+		php84-bcmath \
+		php84-openssl \
+		php84-pcntl \
+		php84-xsl \
+		php84-zlib \
+		php84-sodium \
 		# Iconv Fix
-		php83-pecl-apcu \
-    && ln -sf /usr/bin/php83 /usr/bin/php
+		php84-pecl-apcu \
+    && ln -sf /usr/bin/php84 /usr/bin/php
 
 # Install apache2.
 RUN apk --no-cache add \
 		ca-certificates \
-		openssl \
 		openssl-dev \
 		pcre-dev \
-		apache2 \
-		apache2-mod-wsgi \
-		apache2-proxy \
-		apache2-ssl
+		apache2-proxy
 
-RUN apk --no-cache add mosquitto mosquitto-dev
-RUN apk --no-cache add mariadb-client
-RUN apk --no-cache add ffmpeg
-	  
 RUN apk --no-cache --repository https://dl-cdn.alpinelinux.org/alpine/edge/community add \
 		freetype-dev \
 		libjpeg-turbo-dev \
 		oniguruma-dev \
-		libxml2-dev \
 		zip \
 		unzip \
 		tzdata \
@@ -188,9 +144,9 @@ RUN set -eux; \
 		echo 'opcache.interned_strings_buffer=8'; \
 		echo 'opcache.max_accelerated_files=4000'; \
 		echo 'opcache.revalidate_freq=2'; \
-	} > /etc/php83/conf.d/00-opcache-recommended.ini
+	} > /etc/php84/conf.d/00-opcache-recommended.ini
+ 
 # https://wordpress.org/support/article/editing-wp-config-php/#configure-error-logging
-
 RUN { \
 # https://www.php.net/manual/en/errorfunc.constants.php
 # https://github.com/docker-library/wordpress/issues/420#issuecomment-517839670
@@ -203,7 +159,7 @@ RUN { \
 		echo 'ignore_repeated_errors = On'; \
 		echo 'ignore_repeated_source = Off'; \
 		echo 'html_errors = Off'; \
-	} > /etc/php83/conf.d/error-logging.ini
+	} > /etc/php84/conf.d/error-logging.ini
 
 # Enable mod_rewrite (or any other module)
 RUN sed -i '/LoadModule rewrite_module/s/^#//g' /etc/apache2/httpd.conf
@@ -262,10 +218,6 @@ RUN set -eux; \
 	done; \
 	chown -R apache:apache wp-content; \
 	chmod -R 1777 wp-content
-
-
-
-
 
 
 # TODO CHECK THIS
