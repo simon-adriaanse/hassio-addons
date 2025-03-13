@@ -11,11 +11,15 @@ RUN apk add --no-cache bash curl less vim nginx ca-certificates git tzdata zip o
     php84-intl php84-bcmath php84-dom php84-mbstring php84-xmlreader mysql-client curl && \
     rm -rf /var/cache/apk/*
 
+# TODO: JUST FOR TESTING IN DOCKER
+# RUN apk add --no-cache mariadb mariadb-client
+
+# Todo: Two lines of nginx user?
 RUN sed -i 's/;cgi.fix_pathinfo=1/cgi.fix_pathinfo=0/g' /etc/php84/php.ini && \
     sed -i 's/expose_php = On/expose_php = Off/g' /etc/php84/php.ini && \
     sed -i "s/nginx:x:100:101:nginx:\/var\/lib\/nginx:\/sbin\/nologin/nginx:x:100:101:nginx:\/usr:\/bin\/bash/g" /etc/passwd && \
     sed -i "s/nginx:x:100:101:nginx:\/var\/lib\/nginx:\/sbin\/nologin/nginx:x:100:101:nginx:\/usr:\/bin\/bash/g" /etc/passwd- && \
-    ln -s /sbin/php-fpm7 /sbin/php-fpm
+    ln -s /sbin/php-fpm84 /sbin/php-fpm
 
 # Copy nginx and php-fpm configuration files
 COPY files/nginx.conf /etc/nginx/
@@ -32,12 +36,11 @@ WORKDIR /usr/html
 COPY run.sh /
 RUN chmod a+x /run.sh
 
-COPY index.html /
-RUN chmod a+x /index.html
+#COPY index.html /
+#RUN chmod a+x /index.html
 
 # Expose ports
 EXPOSE 80
-
 
 # Define the command to run when the container starts
 CMD [ "/run.sh" ]
