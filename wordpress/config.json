@@ -49,7 +49,7 @@
     "80/tcp": "Web interface http",
     "443/tcp": "SSL Web interface"
   },
-  "services": {
-    "mysql": "need"
-  }
+  "services": [
+    "mysql:need"
+  ]
 }
