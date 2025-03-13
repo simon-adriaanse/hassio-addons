@@ -4,8 +4,6 @@
 
 Wordpress for Homeassistant OS
 
-![Ingress Support](../_images/apache2/ingress.png)
-
 ## About
 
 This repository contains WordPress resources, themes, plugins, and custom development tools. Whether you're building a new site or enhancing an existing one, you'll find useful code, configurations, and best practices here. 
@@ -25,12 +23,12 @@ If you want to integrate your website with a mariadb database. Please ensure tha
 Example add-on configuration:
 
 ```yaml
-document_root: /media/apache2
-php_ini: /share/apache2/php.ini
-default_conf: /share/apache2/000-default.conf
+document_root: /media/nginx
+php_ini: /share/nginx/php.ini
+default_conf: /share/nginx/000-default.conf
 default_ssl_conf: get_file
 website_name: itdoesntmatter_as_ssl_is_set_to_false
-username: apache
+username: nginx
 password: mySecretPassword
 ssl: false
 certfile: itdoesntmatter_as_ssl_is_set_to_false
@@ -43,6 +41,7 @@ Recommended Example add-on configuration:
 document_root: /share/htdocs
 php_ini: default
 default_conf: default
+dbhost: core-mariadb
 default_ssl_conf: default
 website_name: mywebsite.ddns.net
 ssl: true
@@ -52,61 +51,15 @@ keyfile: privkey.pem
 
 **Note**: _This is just an example, don't copy and paste it! Create your own!_
 
-### Option: `document_root`
-
-This option is needed. Change it depending where your root webfolder is on your homeassistant installation.
-
-Note: it has to be somewhere in the /share or /media folder! Other folders are not visible to this addon.
-
 ### Option: `php_ini`
 
 You can choose between the following options:
 
 default -> the default php84 php.ini file will be used
 
-get_file -> copies the default php84 php.ini file from the addon to /share/apache2addon_php.ini
+get_file -> copies the default php84 php.ini file from the addon to /share/addon_php.ini
 
-path/to/your/new/php.ini -> Please change the location depending where your custom php.ini file is, f.e.: /share/apache2/php.ini
-
-### Option: `default_conf` & `default_ssl_conf`
-
-You can choose between the following options:
-
-default -> the default apache2 addon file will be used
-
-get_config -> Get a copy of the default apache2 addon config file to your /share folder.
-
-path/to/your/new/apache2.conf -> Please change the location depending where your custom 000-default.conf / 000-default-le-ssl.conf file is, f.e.: /share/apache2/000-default.conf <br />
-More Information: <https://cwiki.apache.org/confluence/display/HTTPD/ExampleVhosts><br /> <br />
-Please note, that I wont give any support if you are using custom apache2 config files and are receiving any apache2 errors!
-
-### Option: `website_name`
-
-This option is needed, if you enable ssl to true. If you are not using SSL put anything in here, as it doesnt matter.
-
-### Option: `username`
-
-This option is optional. This user is for accessing web files (NOT the website itself). It will change the owner of all web files from "root" to this new owner.
-
-This is NOT used for authentification for your website. If you want this have a look at [Authentification for your website](#authentification-for-your-website)
-
-### Option: `password`
-
-This option is optional. Some self hosted web sites require an authentification password to access files within the docker image. #50
-
-This is NOT used for authentification for your website. If you want this have a look at [Authentification for your website](#authentification-for-your-website)
-
-### Option: `ssl`
-
-Enables/Disables SSL (HTTPS) on the web interface.
-
-**Note**: _The files MUST be stored in `/ssl/`, which is the default_
-
-### Option: `init_commands`
-
-This option is optional. If you need some special packages or commands, you can use this option to install/use them. #124
-
-If you are encountering any issues, please remove this option before submitting a bug report!
+path/to/your/new/php.ini -> Please change the location depending where your custom php.ini file is, f.e.: /etc/php84/php.ini
 
 ## Authentification for your website
 Use a .htaccess file in combination with a .htpasswd file for this: <https://www.htaccessredirect.net/>
@@ -120,11 +73,6 @@ AuthUserFile /share/.htpasswd
 Require valid-user
 ```
 
-## Ingress
-
-This addon supports Homeassistant Ingress. Until now it seems only to work if you enable SSL!
-And also I am sorry, but I cant support all your websites. Basic HTML Websites will work great with ingress, the more advanced the page is, the harder it is to support ingress.
-
 ## Support
 
 Got questions or problems?
@@ -134,7 +82,7 @@ Please keep in mind, that this software is only tested on armv7 running on a Ras
 
 ## Authors & contributors
 
-The original program is from the Wordpress Project. For more information please visit this page: <https://httpd.apache.org/>
+The original program is from the Wordpress Project. For more information please visit this page: <https://www.wordpress.com/>
 The hassio addon is brought to you by [simon-adriaanse].
 
 ## License
@@ -161,7 +109,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
-[maintenance-shield]: https://img.shields.io/maintenance/yes/2024.svg
+[maintenance-shield]: https://img.shields.io/maintenance/yes/2025.svg
 [aarch64-shield]: https://img.shields.io/badge/aarch64-yes-green.svg
 [amd64-shield]: https://img.shields.io/badge/amd64-yes-green.svg
 [armhf-shield]: https://img.shields.io/badge/armhf-yes-green.svg

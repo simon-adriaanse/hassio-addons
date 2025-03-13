@@ -13,6 +13,11 @@ default_ssl_conf=$(bashio::config 'default_ssl_conf')
 webrootdocker=/var/www/localhost/htdocs/
 phppath=/etc/php84/php.ini
 
+# env["DB_HOST"] = "$DB_HOST"
+# env["DB_USER"] = "$DB_USER"
+# env["DB_PASS"] = "$DB_PASS"
+# env["DB_NAME"] = "$DB_NAME"
+
 installpath=/usr/html
 phpini="default"
 
@@ -43,9 +48,6 @@ if [ $phpini != "default" ]; then
 		echo "You have changed the php_ini variable, but the new file could not be found! Default php.ini file will be used instead."
 	fi
 fi
-
-#mv /index.html $installpath/index.html
-#chown -R nginx:nginx $installpath
 
 # phpmyadmin
 if [ ! -d "$installpath/phpmyadmin" ]; then
@@ -84,10 +86,6 @@ echo "$sha1 *wordpress.tar.gz" | sha1sum -c -;
 tar -xzf wordpress.tar.gz -C $installpath/;
 rm wordpress.tar.gz;
 
-#TODO TESTING PURPOSES ONLY!!!
-#echo "<?php phpinfo(); ?>" > $installpath/wordpress/info.php
-#chown -R nginx:nginx $installpath/wordpress/info.php
-
 echo "# BEGIN WordPress" >> $installpath/wordpress/.htaccess
 echo "" >> $installpath/wordpress/.htaccess
 echo "RewriteEngine On" >> $installpath/wordpress/.htaccess
@@ -107,7 +105,6 @@ chmod -R 755 $installpath/wordpress/wp-includes
 
 # pre-create wp-content (and single-level children) for folks who want to bind-mount themes, etc so permissions are pre-created properly instead of root:root
 # wp-content/cache: https://github.com/docker-library/wordpress/issues/534#issuecomment-705733507
-
 # if [ ! -d "$installpath/wp-content" ]; then
 # 	mkdir  $installpath/wp-content;
 # fi
