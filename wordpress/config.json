@@ -1,6 +1,6 @@
 {
   "name": "Wordpress",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "slug": "wordpress",
   "description": "OpenSource Website building tool",
   "url": "https://github.com/simon-adriaanse/hassio-addons/tree/master/wordpress",
@@ -49,5 +49,7 @@
     "80/tcp": "Web interface http",
     "443/tcp": "SSL Web interface"
   },
-  "services": "mysql:need"
+  "services": {
+    "mysql": "need"
+  }
 }
