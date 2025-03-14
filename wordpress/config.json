@@ -1,6 +1,6 @@
 {
   "name": "Wordpress",
-  "version": "0.0.10",
+  "version": "0.0.11",
   "slug": "wordpress",
   "description": "OpenSource Website building tool",
   "url": "https://github.com/simon-adriaanse/hassio-addons/tree/master/wordpress",
@@ -38,8 +38,12 @@
     "ssl": "bool",
     "certfile": "str",
     "keyfile": "str",
-    "init_commands":
-      "str?"
+    "init_commands": [
+      {
+        "name": "str",
+        "value": "str"
+      }
+    ]
   },
   "ports": {
     "80/tcp": 80,

@@ -1,5 +1,4 @@
-ARG BUILD_FROM=ghcr.io/hassio-addons/base:17.2.1
-FROM ${BUILD_FROM}
+FROM ghcr.io/hassio-addons/base:17.2.1
 
 RUN apk add --no-cache bash curl less vim nginx ca-certificates git tzdata zip openssl openssl-dev \
     libmcrypt-dev zlib-dev gmp-dev \
@@ -8,10 +7,9 @@ RUN apk add --no-cache bash curl less vim nginx ca-certificates git tzdata zip o
     php84-pdo_mysql php84-mysqli php84-session \
     php84-gd php84-iconv php84-gmp php84-zip \
     php84-curl php84-opcache php84-ctype php84-apcu \
-    php84-intl php84-bcmath php84-dom php84-mbstring php84-xmlreader mysql-client curl && \
+    php84-intl php84-bcmath php84-dom php84-mbstring php84-xmlreader mysql-client && \
     rm -rf /var/cache/apk/*
 
-# Todo: Two lines of nginx user?
 RUN sed -i 's/;cgi.fix_pathinfo=1/cgi.fix_pathinfo=0/g' /etc/php84/php.ini && \
     sed -i 's/expose_php = On/expose_php = Off/g' /etc/php84/php.ini && \
     sed -i "s/nginx:x:100:101:nginx:\/var\/lib\/nginx:\/sbin\/nologin/nginx:x:100:101:nginx:\/usr:\/bin\/bash/g" /etc/passwd && \

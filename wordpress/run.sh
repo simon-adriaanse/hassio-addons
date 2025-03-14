@@ -35,7 +35,7 @@ fi
 echo "[i] php.ini..."
 if [ $phpini = "get_file" ]; then
 	cp $phppath /share/wp_php.ini
-	echo "You have requestet a copy of the php.ini file. You will now find your copy at /share/wp_php.ini"
+	echo "You have requested a copy of the php.ini file. You will now find your copy at /share/wp_php.ini"
 	echo "Addon will now be stopped. Please remove the config option and change it to the name of your new config file (for example /share/php.ini)"
 	exit 1
 fi
@@ -49,54 +49,44 @@ if [ $phpini != "default" ]; then
 	fi
 fi
 
-# phpmyadmin
-if [ ! -d "$installpath/phpmyadmin" ]; then
-	echo "[i] Install phpmyadmin..."
- 	mkdir $installpath/phpmyadmin
- 	curl -L -s "https://files.phpmyadmin.net/phpMyAdmin/5.2.1/phpMyAdmin-5.2.1-all-languages.tar.gz" | tar zxvf - --strip 1 -C $installpath/phpmyadmin
-	
- 	sed -i "s@'configFile' =>.*@'configFile' => '/etc/phpmyadmin/config.inc.php',@"	$installpath/phpmyadmin/libraries/vendor_config.php
-	
- 	find $installpath/ -type f -name "*.md" -depth -exec rm -f {} \;
- 	rm -f -r /tmp/* $installpath/phpmyadmin/setup $installpath/phpmyadmin/examples $installpath/phpmyadmin/test/ $installpath/phpmyadmin/po $installpath/phpmyadmin/composer.json $installpath/phpmyadmin/RELEASE-DATE-*
-
-     echo "[i] phpmyadmin installed"
- else
-     echo "[i] phpmyadmin already exists"
- fi
-
+if [ ! -d "$installpath" ]; then
+	mkdir -p $installpath
+fi
+chown -R nginx:nginx $installpath;
 
 # start php-fpm
 echo "[i] Start php-fpm..."
 mkdir -p /usr/logs/php-fpm
 php-fpm84
 
-# install Wordpress
-mkdir -p $installpath
-chown -R nginx:nginx $installpath;
 
-version='6.7.2';
-sha1='ff727df89b694749e91e357dc2329fac620b3906';
-echo "[i] Install Wordpress $version..."
+if [ ! -d "$installpath/wordpress" ]; then
+	echo "[i] Installing Wordpress..."
+	# install Wordpress
+	version='6.7.2';
+	sha1='ff727df89b694749e91e357dc2329fac620b3906';
+	echo "[i] Install Wordpress $version..."
 
-curl -o wordpress.tar.gz -fL "https://wordpress.org/wordpress-$version.tar.gz";
-echo "$sha1 *wordpress.tar.gz" | sha1sum -c -;
+	curl -o wordpress.tar.gz -fL "https://wordpress.org/wordpress-$version.tar.gz";
+	echo "$sha1 *wordpress.tar.gz" | sha1sum -c -;
 
-# upstream tarballs include ./wordpress/ so this gives us $installpath/wordpress
-tar -xzf wordpress.tar.gz -C $installpath/;
-rm wordpress.tar.gz;
+	# upstream tarballs include ./wordpress/ so this gives us $installpath/wordpress
+	tar -xzf wordpress.tar.gz -C $installpath/;
+	rm wordpress.tar.gz;
 
-echo "# BEGIN WordPress" >> $installpath/wordpress/.htaccess
-echo "" >> $installpath/wordpress/.htaccess
-echo "RewriteEngine On" >> $installpath/wordpress/.htaccess
-echo "RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]" >> $installpath/wordpress/.htaccess
-echo "RewriteBase /" >> $installpath/wordpress/.htaccess
-echo "RewriteRule ^index\.php$ - [L]" >> $installpath/wordpress/.htaccess
-echo "RewriteCond %{REQUEST_FILENAME} !-f" >> $installpath/wordpress/.htaccess
-echo "RewriteCond %{REQUEST_FILENAME} !-d" >> $installpath/wordpress/.htaccess
-echo "RewriteRule . /index.php [L]" >> $installpath/wordpress/.htaccess
-echo "# END WordPress" >> $installpath/wordpress/.htaccess
-
+	echo "# BEGIN WordPress" >> $installpath/wordpress/.htaccess
+	echo "" >> $installpath/wordpress/.htaccess
+	echo "RewriteEngine On" >> $installpath/wordpress/.htaccess
+	echo "RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]" >> $installpath/wordpress/.htaccess
+	echo "RewriteBase /" >> $installpath/wordpress/.htaccess
+	echo "RewriteRule ^index\.php$ - [L]" >> $installpath/wordpress/.htaccess
+	echo "RewriteCond %{REQUEST_FILENAME} !-f" >> $installpath/wordpress/.htaccess
+	echo "RewriteCond %{REQUEST_FILENAME} !-d" >> $installpath/wordpress/.htaccess
+	echo "RewriteRule . /index.php [L]" >> $installpath/wordpress/.htaccess
+	echo "# END WordPress" >> $installpath/wordpress/.htaccess
+else
+	echo "[i] Wordpress already installed..."
+fi
 chown -R nginx:nginx $installpath/wordpress;
 chmod -R 755 $installpath/wordpress
 chmod -R 755 $installpath/wordpress/wp-admin
@@ -117,7 +107,11 @@ chmod -R 755 $installpath/wordpress/wp-includes
 
 # start nginx
 echo "[i] Start Nginx..."
-mkdir -p /usr/logs/nginx
-mkdir -p /tmp/nginx
+if [ ! -d "/usr/logs/nginx" ]; then
+	mkdir -p /usr/logs/nginx
+fi
+if [ ! -d "/tmp/nginx" ]; then
+	mkdir -p /tmp/nginx
+fi
 chown nginx /tmp/nginx
 nginx
