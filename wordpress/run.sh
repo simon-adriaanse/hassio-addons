@@ -84,7 +84,10 @@ chmod -R 755 $installpath/wordpress/wp-content
 chmod -R 755 $installpath/wordpress/wp-includes
 
 # remove maintenance mode after a reboot
-rm $installpath/wordpress/.maintenance
+if [ ! -f " $installpath/wordpress/.maintenance" ]; then
+	echo "[i] Dorment .maintenance file found, removing..."
+	rm $installpath/wordpress/.maintenance
+fi
 
 # start nginx
 echo "[i] Start Nginx..."
