@@ -12,6 +12,8 @@ This repository contains WordPress resources, themes, plugins, and custom develo
 
 🔗 [WordPress Documentation](https://developer.wordpress.org/)
 
+[![Buy me a coffee][buymeacoffee-shield]][buymeacoffee]
+
 ## Installation
 
 [![CimarronNL Homeassistant Addons](https://my.home-assistant.io/badges/supervisor_add_addon_repository.svg)](https://my.home-assistant.io/redirect/supervisor_add_addon_repository/?repository_url=https%3A%2F%2Fgithub.com%2Fsimon-adriaanse%2Fhassio-addons)
@@ -62,3 +64,5 @@ SOFTWARE.
 [i386-shield]: https://img.shields.io/badge/i386-yes-green.svg
 [simon-adriaanse]: https://github.com/simon-adriaanse/
 [issue]: https://github.com/simon-adriaanse/hassio-addons/issues
+[buymeacoffee-shield]: https://www.buymeacoffee.com/assets/img/guidelines/download-assets-sm-2.svg
+[buymeacoffee]: https://buymeacoffee.com/cimarronnl
