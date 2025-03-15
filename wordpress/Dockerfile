@@ -54,5 +54,7 @@ LABEL \
 # Expose ports
 EXPOSE 80
 
+USER nginx
+
 # Define the command to run when the container starts
 CMD [ "/run.sh" ]

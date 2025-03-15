@@ -1,4 +1,5 @@
 # Home Assistant Community Add-on: Wordpress
+
 ![Supports aarch64 Architecture][aarch64-shield] ![Supports amd64 Architecture][amd64-shield] ![Supports armhf Architecture][armhf-shield] ![Supports armv7 Architecture][armv7-shield] ![Supports i386 Architecture][i386-shield]
 ![Project Maintenance][maintenance-shield]
 
@@ -6,7 +7,7 @@ Wordpress for Homeassistant OS
 
 ## About
 
-This repository contains WordPress resources, themes, plugins, and custom development tools. Whether you're building a new site or enhancing an existing one, you'll find useful code, configurations, and best practices here. 
+This repository contains WordPress resources, themes, plugins, and custom development tools. Whether you're building a new site or enhancing an existing one, you'll find useful code, configurations, and best practices here.
 
 🔗 [WordPress Documentation](https://developer.wordpress.org/)
 
@@ -34,6 +35,7 @@ ssl: false
 certfile: itdoesntmatter_as_ssl_is_set_to_false
 keyfile: itdoesntmatter_as_ssl_is_set_to_false
 ```
+
 <br />
 Recommended Example add-on configuration:
 
@@ -60,18 +62,6 @@ default -> the default php84 php.ini file will be used
 get_file -> copies the default php84 php.ini file from the addon to /share/addon_php.ini
 
 path/to/your/new/php.ini -> Please change the location depending where your custom php.ini file is, f.e.: /etc/php84/php.ini
-
-## Authentification for your website
-Use a .htaccess file in combination with a .htpasswd file for this: <https://www.htaccessredirect.net/>
-
-Example .htaccess file:
-
-```bash
-AuthType Basic
-AuthName "My Webserver Authentification"
-AuthUserFile /share/.htpasswd
-Require valid-user
-```
 
 ## Support
 
