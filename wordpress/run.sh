@@ -18,7 +18,7 @@ phppath=/etc/php84/php.ini
 # env["DB_PASS"] = "$DB_PASS"
 # env["DB_NAME"] = "$DB_NAME"
 
-installpath=/usr/html
+installpath=/data/html
 phpini="default"
 
 if [ ! -d $installpath ]; then
@@ -48,11 +48,6 @@ if [ $phpini != "default" ]; then
 		echo "You have changed the php_ini variable, but the new file could not be found! Default php.ini file will be used instead."
 	fi
 fi
-
-if [ ! -d "$installpath" ]; then
-	mkdir -p $installpath
-fi
-chown -R nginx:nginx $installpath;
 
 # start php-fpm
 echo "[i] Start php-fpm..."

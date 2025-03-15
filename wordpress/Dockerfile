@@ -1,5 +1,8 @@
 FROM ghcr.io/hassio-addons/base:17.2.1
 
+# Set shell
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
+
 RUN apk add --no-cache bash curl less vim nginx ca-certificates git tzdata zip openssl openssl-dev \
     libmcrypt-dev zlib-dev gmp-dev \
     freetype-dev libjpeg-turbo-dev libpng-dev \
@@ -31,6 +34,15 @@ WORKDIR /usr/html
 COPY run.sh /
 RUN chmod a+x /run.sh
 
+# Build arguments
+ARG BUILD_ARCH
+ARG BUILD_DATE
+ARG BUILD_DESCRIPTION
+ARG BUILD_NAME
+ARG BUILD_REF
+ARG BUILD_REPOSITORY
+ARG BUILD_VERSION
+
 # Labels
 LABEL \
     io.hass.name="${BUILD_NAME}" \
@@ -53,8 +65,6 @@ LABEL \
 
 # Expose ports
 EXPOSE 80
-
-USER nginx
 
 # Define the command to run when the container starts
 CMD [ "/run.sh" ]
