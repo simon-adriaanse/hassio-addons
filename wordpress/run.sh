@@ -1,5 +1,4 @@
 #!/usr/bin/with-contenv bashio
-#!/bin/sh
 ssl=$(bashio::config 'ssl')
 website_name=$(bashio::config 'website_name')
 certfile=$(bashio::config 'certfile')
@@ -10,11 +9,16 @@ username=$(bashio::config 'username')
 password=$(bashio::config 'password')
 default_conf=$(bashio::config 'default_conf')
 default_ssl_conf=$(bashio::config 'default_ssl_conf')
-webrootdocker=/var/www/localhost/htdocs/
-phppath=/etc/php84/php.ini
 
+phppath=/etc/php84/php.ini
 installpath=/data/html
 phpini="default"
+
+if ! bashio::services.available 'mysql'; then
+	echo "[E] Mysql Service not found..."
+	bashio::log.fatal "Local database access should be provided by the MariaDB addon"
+	bashio::exit.nok "Please ensure it is installed and started"
+fi
 
 if [ ! -d $installpath ]; then
 	echo "[i] Creating directories..."
