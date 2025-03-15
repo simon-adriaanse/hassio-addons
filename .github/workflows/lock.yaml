@@ -1,6 +1,10 @@
 ---
 name: Lock
 
+permissions:
+  issues: write  # Required to lock closed issues
+  pull-requests: write  # Required to lock closed PRs
+
 # yamllint disable-line rule:truthy
 on:
   schedule:

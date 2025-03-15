@@ -1,5 +1,9 @@
 name: Convert CRLF to LF
 
+permissions:
+  contents: write  # Required to commit and push CRLF to LF changes
+  pull-requests: read  # Allows reading pull request details (write is not needed)
+
 on:
   workflow_call:
   workflow_dispatch:

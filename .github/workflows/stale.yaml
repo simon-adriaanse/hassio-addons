@@ -1,6 +1,11 @@
 ---
 name: Stale
 
+permissions:
+  issues: write  # Required to mark issues as stale and close them
+  pull-requests: write  # Needed to mark PRs as stale and close them
+  contents: read  # Allows reading repository contents (though not needed for this workflow)
+
 # yamllint disable-line rule:truthy
 on:
   schedule:

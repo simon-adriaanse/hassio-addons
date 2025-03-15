@@ -6,6 +6,22 @@ name: Builder
 env:
   BUILD_ARGS: "--test"
 
+permissions:
+  actions: read  # Allows reading workflow actions but doesn't need write access
+  attestations: none
+  checks: read   # Allows reading checks; write is not needed
+  contents: write  # Needed for pushing changes (e.g., updating files in the repo)
+  deployments: none
+  id-token: write  # Required for authentication with GitHub's OIDC for secure login
+  issues: read  # Read access for issues (write is not needed in this workflow)
+  discussions: none
+  packages: write  # Required for pushing built add-ons to GitHub Container Registry (GHCR)
+  pages: none
+  pull-requests: read  # Read access for pull request details (write is not needed)
+  repository-projects: none
+  security-events: none
+  statuses: write  # Required to update commit statuses (e.g., marking builds as passing/failing)
+
 on:
   push:
     branches:
