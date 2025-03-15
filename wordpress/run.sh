@@ -13,11 +13,6 @@ default_ssl_conf=$(bashio::config 'default_ssl_conf')
 webrootdocker=/var/www/localhost/htdocs/
 phppath=/etc/php84/php.ini
 
-# env["DB_HOST"] = "$DB_HOST"
-# env["DB_USER"] = "$DB_USER"
-# env["DB_PASS"] = "$DB_PASS"
-# env["DB_NAME"] = "$DB_NAME"
-
 installpath=/data/html
 phpini="default"
 
@@ -88,17 +83,8 @@ chmod -R 755 $installpath/wordpress/wp-admin
 chmod -R 755 $installpath/wordpress/wp-content
 chmod -R 755 $installpath/wordpress/wp-includes
 
-# pre-create wp-content (and single-level children) for folks who want to bind-mount themes, etc so permissions are pre-created properly instead of root:root
-# wp-content/cache: https://github.com/docker-library/wordpress/issues/534#issuecomment-705733507
-# if [ ! -d "$installpath/wp-content" ]; then
-# 	mkdir  $installpath/wp-content;
-# fi
-# for dir in $installpath/wordpress/wp-content/*/ cache; do
-# 	dir="$(basename "${dir%/}")";
-# 	mkdir "wp-content/$dir";
-# done;
-# chown -R nginx:nginx wp-content;
-# chmod -R 1777 wp-content
+# remove maintenance mode after a reboot
+rm $installpath/wordpress/.maintenance
 
 # start nginx
 echo "[i] Start Nginx..."
