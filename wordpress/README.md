@@ -1,7 +1,10 @@
 # Home Assistant Community Add-on: Wordpress
 
+[![License][license-shield]](LICENSE.md)
+
 ![Supports aarch64 Architecture][aarch64-shield] ![Supports amd64 Architecture][amd64-shield] ![Supports armhf Architecture][armhf-shield] ![Supports armv7 Architecture][armv7-shield] ![Supports i386 Architecture][i386-shield]
-![Project Maintenance][maintenance-shield]
+
+![Project Maintenance][maintenance-shield][![GitHub Activity][commits-shield]][commits]
 
 Wordpress for Homeassistant OS
 
@@ -16,52 +19,6 @@ This repository contains WordPress resources, themes, plugins, and custom develo
 [![CimarronNL Homeassistant Addons](https://my.home-assistant.io/badges/supervisor_add_addon_repository.svg)](https://my.home-assistant.io/redirect/supervisor_add_addon_repository/?repository_url=https%3A%2F%2Fgithub.com%2Fsimon-adriaanse%2Fhassio-addons)
 
 If you want to integrate your website with a mariadb database. Please ensure that the MariaDB Addon is installed!
-
-## Configuration
-
-**Note**: _Remember to restart the add-on when the configuration is changed._
-
-Example add-on configuration:
-
-```yaml
-document_root: /media/nginx
-php_ini: /share/nginx/php.ini
-default_conf: /share/nginx/000-default.conf
-default_ssl_conf: get_file
-website_name: itdoesntmatter_as_ssl_is_set_to_false
-username: nginx
-password: mySecretPassword
-ssl: false
-certfile: itdoesntmatter_as_ssl_is_set_to_false
-keyfile: itdoesntmatter_as_ssl_is_set_to_false
-```
-
-<br />
-Recommended Example add-on configuration:
-
-```yaml
-document_root: /share/htdocs
-php_ini: default
-default_conf: default
-dbhost: core-mariadb
-default_ssl_conf: default
-website_name: mywebsite.ddns.net
-ssl: true
-certfile: fullchain.pem
-keyfile: privkey.pem
-```
-
-**Note**: _This is just an example, don't copy and paste it! Create your own!_
-
-### Option: `php_ini`
-
-You can choose between the following options:
-
-default -> the default php84 php.ini file will be used
-
-get_file -> copies the default php84 php.ini file from the addon to /share/addon_php.ini
-
-path/to/your/new/php.ini -> Please change the location depending where your custom php.ini file is, f.e.: /etc/php84/php.ini
 
 ## Support
 

@@ -26,10 +26,6 @@ COPY files/php-fpm.conf /etc/php84/
 # Install WP-CLI
 RUN curl -o /usr/bin/wp-cli https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar && chmod +x /usr/bin/wp-cli && chown nginx:nginx /usr/bin/wp-cli
 
-# Define the volume and set working directory
-VOLUME ["/usr/html"]
-WORKDIR /usr/html
-
 # Copy data for the add-on
 COPY run.sh /
 RUN chmod a+x /run.sh
