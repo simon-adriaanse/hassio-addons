@@ -1,0 +1,52 @@
+{
+  "name": "Nginx",
+  "version": "0.0.1",
+  "slug": "nginx",
+  "description": "nginx (engine x) is an HTTP web server, reverse proxy, content cache, load balancer, TCP/UDP proxy server, and mail proxy server.",
+  "url": "https://github.com/simon-adriaanse/hassio-addons/tree/master/nginx",
+  "arch": ["armhf", "armv7", "aarch64", "amd64", "i386"],
+  "map": ["share:rw", "ssl:rw", "media:rw"],
+  "ingress": true,
+  "ingress_port": 8053,
+  "ingress_stream": true,
+  "init": false,
+  "panel_icon": "mdi:web-box",
+  "panel_title": "Nginx",
+  "options": {
+    "document_root": "/share/html",
+    "php_ini": "default",
+    "default_conf": "default",
+    "default_ssl_conf": "default",
+    "website_name": "Website",
+    "ssl": true,
+    "certfile": "fullchain.pem",
+    "keyfile": "privkey.pem",
+    "init_commands": []
+  },
+  "schema": {
+    "document_root": "str",
+    "php_ini": "str",
+    "default_conf": "str",
+    "default_ssl_conf": "str",
+    "website_name": "str",
+    "username": "str?",
+    "password": "password?",
+    "ssl": "bool",
+    "certfile": "str",
+    "keyfile": "str",
+    "init_commands": [
+      {
+        "name": "str",
+        "value": "str"
+      }
+    ]
+  },
+  "ports": {
+    "8053/tcp": 8053,
+    "8443": 8443
+  },
+  "ports_description": {
+    "8053/tcp": "Web interface http (Not required for Ingress)",
+    "8443/tcp": "SSL Web interface"
+  }
+}
