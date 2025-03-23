@@ -14,6 +14,14 @@ This repository is designed to host **Home Assistant add-ons**, extending the fu
    
    📄 [Read the WordPress Add-on Documentation](./wordpress/README.md)
 
+
+## 2. **Nginx**
+   - This repository contains Nginx ("engine x"), which is an HTTP web server, reverse proxy, content cache, load balancer, TCP/UDP proxy server, and mail proxy server.
+   - Run a self-hosted **Nginx** instance within Home Assistant.
+   - Designed for seamless integration with Home Assistant.
+
+   📄 [Read the Nginx Add-on Documentation](./nginx/README.md)
+   
 More add-ons may be added in the future, so stay tuned! 🎉
 
 # Installation
