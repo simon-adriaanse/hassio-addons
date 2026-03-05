@@ -1,0 +1,36 @@
+{
+  "name": "Timini",
+  "version": "0.0.15",
+  "slug": "timini",
+  "description": "A Node.js-based daily routine clock for kids",
+  "url": "https://github.com/simon-adriaanse/hassio-addons/tree/master/timini",
+  "startup": "services",
+  "boot": "auto",
+  "arch": ["armv7", "aarch64", "amd64"],
+  "map": ["share:rw", "ssl:rw", "media:rw"],
+  "init": false,
+  "panel_icon": "mdi:calendar",
+  "panel_title": "Timini",
+  "ingress": true,
+  "ingress_port": 3000,
+  "ingress_stream": true,
+  "ports": {
+    "3000/tcp": 3000
+  },
+  "ports_description": {
+    "3000/tcp": "Web interface http (Not required for Ingress)"
+  },
+  "webui": "http://[HOST]:[PORT:3000]",
+  "host_network": false,
+  "schema": {
+    "google_api_key": "str",
+    "google_api_secret": "str"
+  },
+  "options": {
+    "google_api_key": "",
+    "google_api_secret": ""
+  },
+  "services": [
+    "mysql:need"
+  ]
+}

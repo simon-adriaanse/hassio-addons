@@ -2,3 +2,4 @@
 # Those are the addon path filters used in the workflows to determine which addon needs to be build.
 nginx: nginx/** # Image : yes
 wordpress: wordpress/** # Image : yes
+timini: timini/** # Image : yes
