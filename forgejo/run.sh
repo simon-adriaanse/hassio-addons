@@ -1,14 +1,12 @@
 #!/usr/bin/with-contenv bashio
-
-FORGEJO_DATA=/share/forgejo
-GIT_USER=git
-
 # Read configuration
-domain=$(bashio::config 'domain')
-ssh_port=$(bashio::config 'ssh_port')
 ssl=$(bashio::config 'ssl')
 certfile=$(bashio::config 'certfile')
 keyfile=$(bashio::config 'keyfile')
+FORGEJO_DATA=/share/forgejo
+GIT_USER=git
+domain=$(bashio::config 'domain')
+ssh_port=$(bashio::config 'ssh_port')
 
 # Create Forgejo data directories if they don't exist
 if [ ! -d "${FORGEJO_DATA}" ]; then
