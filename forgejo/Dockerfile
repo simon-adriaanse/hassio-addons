@@ -1,35 +1,38 @@
-FROM golang:1.25-alpine AS builder
-
-RUN apk add --no-cache make gcc musl-dev git nodejs npm
-
-RUN git clone https://codeberg.org/forgejo/forgejo.git /tmp/forgejo && \
-    cd /tmp/forgejo && \
-    make build && \
-    find . -name "forgejo" -type f -executable 2>/dev/null && \
-    ls -la
-
-FROM ghcr.io/hassio-addons/base:17.2.1
-
-# Set shell
-SHELL ["/bin/bash", "-o", "pipefail", "-c"]
+FROM debian:bookworm-slim
 
 # Install dependencies
-RUN apk add --no-cache bash curl git openssh su-exec tzdata
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    bash curl git jq openssh-server tzdata ca-certificates && \
+    rm -rf /var/lib/apt/lists/*
 
-# Copy built binary from builder stage
-COPY --from=builder /tmp/forgejo/forgejo /usr/local/bin/forgejo
-RUN chmod +x /usr/local/bin/forgejo
+# Download Forgejo binary for the correct architecture
+ARG BUILD_ARCH
+RUN case "${BUILD_ARCH}" in \
+        amd64)   FORGEJO_ARCH="amd64"  ;; \
+        aarch64) FORGEJO_ARCH="arm64"  ;; \
+        armhf)   FORGEJO_ARCH="arm-6"  ;; \
+        armv7)   FORGEJO_ARCH="arm-7"  ;; \
+        i386)    FORGEJO_ARCH="386"    ;; \
+        *) echo "Unsupported arch: ${BUILD_ARCH}" && exit 1 ;; \
+    esac && \
+    curl -sSLf -o /usr/local/bin/forgejo \
+        "https://codeberg.org/forgejo/forgejo/releases/download/v9.0.3/forgejo-9.0.3-linux-${FORGEJO_ARCH}" && \
+    chmod +x /usr/local/bin/forgejo
 
 # Create git user for Forgejo (UID/GID 1000)
-RUN addgroup -S -g 1000 git && \
-    adduser -S -u 1000 -G git -h /home/git -s /bin/bash git && \
+RUN groupadd -g 1000 git && \
+    useradd -m -u 1000 -g git -s /bin/bash git && \
     mkdir -p /home/git/.ssh && \
     chmod 700 /home/git/.ssh && \
     chown -R git:git /home/git
 
+# Define the volume and set working directory
+VOLUME ["/usr/html"]
+WORKDIR /usr/html
+
 # Copy data for the add-on
 COPY run.sh /
-RUN sed -i 's/\r$//' /run.sh && chmod a+x /run.sh
+RUN chmod a+x /run.sh
 
 # Build arguments
 ARG BUILD_DATE
