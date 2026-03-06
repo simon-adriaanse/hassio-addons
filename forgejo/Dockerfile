@@ -11,8 +11,7 @@ RUN case "${BUILD_ARCH}" in \
         amd64)   FORGEJO_ARCH="amd64"  ;; \
         aarch64) FORGEJO_ARCH="arm64"  ;; \
         armhf)   FORGEJO_ARCH="arm-6"  ;; \
-        armv7)   FORGEJO_ARCH="arm-7"  ;; \
-        i386)    FORGEJO_ARCH="386"    ;; \
+        armv7)   FORGEJO_ARCH="arm-6"  ;; \
         *) echo "Unsupported arch: ${BUILD_ARCH}" && exit 1 ;; \
     esac && \
     curl -sSLf -o /usr/local/bin/forgejo \
