@@ -21,7 +21,15 @@ This repository is designed to host **Home Assistant add-ons**, extending the fu
    - Designed for seamless integration with Home Assistant.
 
    📄 [Read the Nginx Add-on Documentation](./nginx/README.md)
-   
+
+
+## 3. **Forgejo**
+   - Run a self-hosted **Forgejo** instance within Home Assistant.
+   - Forgejo is a lightweight, community-managed Git forge (Gitea fork) for hosting repositories, issues, pull requests, and more.
+   - Supports SSH git access and HA Ingress out of the box.
+
+   📄 [Read the Forgejo Add-on Documentation](./forgejo/README.md)
+
 More add-ons may be added in the future, so stay tuned! 🎉
 
 # Installation
