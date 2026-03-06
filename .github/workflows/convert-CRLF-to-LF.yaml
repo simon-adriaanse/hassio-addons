@@ -9,38 +9,19 @@ on:
   workflow_dispatch:
 
 jobs:
-  crlf-to-lf:
+  fix-crlf:
+    name: Fix CRLF Endings
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository contents
         uses: actions/checkout@v4
 
-      - name: Use action to check for CRLF endings
-        uses: erclu/check-crlf@v1
-
-      - name: Commit if needed
-        uses: EndBug/add-and-commit@v9
-        with:
-          message: "Github bot : CRLF corrected"
-          default_author: github_actions
-
-  fix-crlf:
-    name: Fix CRLF Endings
-    runs-on: ubuntu-latest # Use a Linux runner
-    steps:
-      - name: Checkout repository contents
-        uses: actions/checkout@v4 # Use the checkout action
-      - name: Find files with CRLF endings
-        uses: erclu/check-crlf@v1 # Use the check-crlf action
-        id: check-crlf # Assign an id to this step
-      - name: Apply dos2unix to files with CRLF endings
+      - name: Fix CRLF line endings
         run: |
-          # Loop through each file and apply dos2unix
-          # shellcheck disable=SC2043
-          for f in ${{ steps.check-crlf.outputs.files }}; do
-            # Apply dos2unix and keep the original timestamp
-            dos2unix -k "$f"
-          done
+          find . -type f \( -name "*.sh" -o -name "*.py" -o -name "*.yml" -o -name "*.yaml" -o -name "*.json" -o -name "*.md" \) \
+            | xargs grep -lU $'\r' 2>/dev/null \
+            | xargs -r dos2unix
+
       - name: Commit if needed
         uses: EndBug/add-and-commit@v9
         with:

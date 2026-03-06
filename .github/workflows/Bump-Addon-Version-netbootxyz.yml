@@ -108,12 +108,9 @@ jobs:
           echo "🎉 Changelog update process completed successfully!"
 
       - name: Commit & Push
-        uses: actions-js/push@v1.5
+        uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          branch: master
-          force: true
-          message: "Increment addon version due to netboot-xyz update"
+          commit_message: "Increment addon version due to netboot-xyz update"
 
   build-image:
     uses: ./.github/workflows/deploy.yaml

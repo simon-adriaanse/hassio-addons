@@ -67,12 +67,9 @@ jobs:
           # Sort yaml
           sort -t= ".github/paths-filter.yml" -o ".github/paths-filter.yml"
       - name: Commit & Push
-        uses: actions-js/push@v1.5
+        uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          branch: master
-          force: true
-          message: "Make scripts executable"
+          commit_message: "Make scripts executable"
 
   check-addon-changes:
     runs-on: ubuntu-latest
@@ -115,12 +112,9 @@ jobs:
         env:
           path: "./${{ matrix.addon }}"
       - name: Commit & Push
-        uses: actions-js/push@v1.5
+        uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          branch: master
-          force: true
-          message: "Make scripts executable"
+          commit_message: "Make scripts executable"
 
   lint_config:
     if: ${{ needs.check-addon-changes.outputs.changedAddons != '[]' }}

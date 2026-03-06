@@ -12,7 +12,7 @@ on:
 jobs:
   version:
     runs-on: ubuntu-latest
-    if: ${{ contains(github.event.head_commit.message, 'Update ghcr.io/hassio-addons/base-python') }} # Detect that the base addon has been updated
+    if: ${{ contains(github.event.head_commit.message, 'Update ghcr.io/hassio-addons/base') }} # Detect that the base addon has been updated
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -24,7 +24,7 @@ jobs:
         run: |
           set -e
           echo "Starting version increment process..."
-          configFiles=$(find . -name 'config.yaml' -print0 | xargs -r0 echo)
+          configFiles=$(find . -name 'config.json' -print0 | xargs -r0 echo)
           if [[ -z "$configFiles" ]]; then
               echo "Error: No config.yaml files found!"
               exit 0
@@ -42,8 +42,8 @@ jobs:
                   chmod +r "$configfile" || { echo "❌ Failed to fix permissions!"; exit 1; }
               fi
               sed -i 's/\r$//' "$configfile"  # Remove Windows line breaks (CRLF -> LF)
-              OLD_VERSION=$(grep -E '^[[:space:]]*version:[[:space:]]+[0-9]+\.[0-9]+\.[0-9]+' "$configfile" | head -1 | awk '{print $2}')
-              if [[ -z "$OLD_VERSION" ]]; then
+              OLD_VERSION=$(jq -r '.version' "$configfile")
+              if [[ -z "$OLD_VERSION" || "$OLD_VERSION" == "null" ]]; then
                   echo "❌ Error: Could not extract a valid version from $configfile"
                   echo " File content:"
                   cat "$configfile"
@@ -78,14 +78,8 @@ jobs:
               fi
               NEW_VERSION="$major.$minor.$patch"
               echo " Updating $configfile from $OLD_VERSION to $NEW_VERSION"
-              sed -i "s/^version: $OLD_VERSION/version: $NEW_VERSION/" "$configfile"
-              if [ $? -ne 0 ]; then
-                  echo "❌ Error: Failed to update version in $configfile"
-                  echo "OLD_VERSION: $OLD_VERSION"
-                  echo "NEW_VERSION: $NEW_VERSION"
-                  exit 1
-              fi
-              NEW_VERSION_CHECK=$(grep -E '^[[:space:]]*version:[[:space:]]+[0-9]+\.[0-9]+\.[0-9]+' "$configfile" | head -1 | awk '{print $2}')
+              jq --arg v "$NEW_VERSION" '.version = $v' "$configfile" > "$configfile.tmp" && mv "$configfile.tmp" "$configfile"
+              NEW_VERSION_CHECK=$(jq -r '.version' "$configfile")
               if [[ "$NEW_VERSION_CHECK" != "$NEW_VERSION" ]]; then
                   echo "❌ Error: Version update failed in $configfile!"
                   echo " File content after attempt:"
@@ -146,12 +140,9 @@ jobs:
           done <<< "$files"
           echo "🎉 Version increment process completed successfully!"
       - name: Commit & Push
-        uses: actions-js/push@v1.5
+        uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          branch: master
-          force: true
-          message: "Increment addon version due to addon base update"
+          commit_message: "Increment addon version due to addon base update"
 
   build-image:
     uses: ./.github/workflows/deploy.yaml
