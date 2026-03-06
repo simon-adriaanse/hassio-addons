@@ -1,11 +1,10 @@
 {
   "name": "Forgejo",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "slug": "forgejo",
   "description": "Self-hosted lightweight software forge",
   "url": "https://github.com/simon-adriaanse/hassio-addons/tree/master/forgejo",
   "arch": ["aarch64", "amd64", "armhf", "armv7", "i386"],
-  "image": "ghcr.io/simon-adriaanse/forgejo-{arch}",
   "map": ["share:rw", "ssl:ro"],
   "ingress": true,
   "ingress_port": 3000,

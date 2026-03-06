@@ -26,10 +26,6 @@ RUN groupadd -g 1000 git && \
     chmod 700 /home/git/.ssh && \
     chown -R git:git /home/git
 
-# Define the volume and set working directory
-VOLUME ["/usr/html"]
-WORKDIR /usr/html
-
 # Copy data for the add-on
 COPY run.sh /
 RUN chmod a+x /run.sh

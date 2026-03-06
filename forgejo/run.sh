@@ -13,27 +13,31 @@ FORGEJO_DATA=/share/forgejo
 GIT_USER=git
 
 # Create Forgejo data directories if they don't exist
-if [ ! -d "${FORGEJO_DATA}" ]; then
-    echo "[INFO] Creating Forgejo data directories..."
-    mkdir -p "${FORGEJO_DATA}/conf"
-    mkdir -p "${FORGEJO_DATA}/repositories"
-    mkdir -p "${FORGEJO_DATA}/data"
-    mkdir -p "${FORGEJO_DATA}/log"
-fi
+mkdir -p "${FORGEJO_DATA}/conf" \
+         "${FORGEJO_DATA}/repositories" \
+         "${FORGEJO_DATA}/data" \
+         "${FORGEJO_DATA}/log" \
+         "${FORGEJO_DATA}/ssh"
 
 echo "[INFO] Setting permissions on Forgejo data directory..."
 chown -R ${GIT_USER}:${GIT_USER} "${FORGEJO_DATA}"
+mkdir -p /home/git/.ssh && chmod 700 /home/git/.ssh && chown -R git:git /home/git
 
-# Set up SSH authorized_keys for git user
-if [ ! -d "/home/git/.ssh" ]; then
-    mkdir -p /home/git/.ssh
-    chmod 700 /home/git/.ssh
-    chown -R git:git /home/git
+# Generate SSH host keys if they don't exist (persisted so clients don't get host key warnings on restart)
+if [ ! -f "${FORGEJO_DATA}/ssh/forgejo.ed25519" ]; then
+    echo "[INFO] Generating SSH host keys..."
+    ssh-keygen -t ed25519 -f "${FORGEJO_DATA}/ssh/forgejo.ed25519" -N "" -q
+    ssh-keygen -t rsa -b 4096 -f "${FORGEJO_DATA}/ssh/forgejo.rsa" -N "" -q
+    chown ${GIT_USER}:${GIT_USER} "${FORGEJO_DATA}/ssh/"*
 fi
 
 # Configure Forgejo via environment variables (FORGEJO__SECTION__KEY pattern)
 export FORGEJO__server__HTTP_PORT=3000
 export FORGEJO__server__SSH_PORT="${ssh_port}"
+export FORGEJO__server__START_SSH_SERVER=true
+export FORGEJO__server__SSH_LISTEN_HOST=0.0.0.0
+export FORGEJO__server__SSH_LISTEN_PORT="${ssh_port}"
+export FORGEJO__server__SSH_SERVER_HOST_KEYS="${FORGEJO_DATA}/ssh/forgejo.ed25519,${FORGEJO_DATA}/ssh/forgejo.rsa"
 export FORGEJO__repository__ROOT="${FORGEJO_DATA}/repositories"
 export FORGEJO__server__APP_DATA_PATH="${FORGEJO_DATA}/data"
 export FORGEJO__log__ROOT_PATH="${FORGEJO_DATA}/log"
@@ -49,9 +53,17 @@ if [ -n "${domain}" ]; then
     else
         export FORGEJO__server__ROOT_URL="http://${domain}:3000/"
     fi
+elif [ -n "${SUPERVISOR_TOKEN}" ]; then
+    ingress_url=$(curl -s \
+        -H "Authorization: Bearer ${SUPERVISOR_TOKEN}" \
+        http://supervisor/addons/self/info | jq -r '.data.ingress_url // ""')
+    if [ -n "${ingress_url}" ]; then
+        echo "[INFO] Configuring ingress URL: ${ingress_url}"
+        export FORGEJO__server__ROOT_URL="${ingress_url}"
+    fi
 fi
 
 echo "[INFO] Starting Forgejo..."
-exec su - ${GIT_USER} -c "/usr/local/bin/forgejo web \
-    --config \"${FORGEJO_DATA}/conf/app.ini\" \
-    --work-path \"${FORGEJO_DATA}\""
+exec runuser -u ${GIT_USER} -- /usr/local/bin/forgejo web \
+    --config "${FORGEJO_DATA}/conf/app.ini" \
+    --work-path "${FORGEJO_DATA}"
