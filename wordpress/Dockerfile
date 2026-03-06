@@ -4,7 +4,7 @@ FROM ghcr.io/hassio-addons/base:17.2.1
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 RUN apk add --no-cache bash curl less vim nginx ca-certificates git tzdata zip openssl openssl-dev \
-    libmcrypt-dev zlib-dev gmp-dev \
+    zlib-dev gmp-dev \
     freetype-dev libjpeg-turbo-dev libpng-dev \
     php84 php84-fpm php84-json php84-zlib php84-xml php84-xmlwriter php84-simplexml php84-pdo php84-phar php84-openssl \
     php84-pdo_mysql php84-mysqli php84-session \
