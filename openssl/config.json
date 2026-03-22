@@ -10,7 +10,7 @@
   "init": false,
   "options": {
     "website_name": "",
-    "log_level": "info",
+    "log_level": "info", 
     "san": ""
   }, 
   "schema": {
