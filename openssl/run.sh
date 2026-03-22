@@ -187,7 +187,8 @@ VALID_DAYS=10000
 san_entries="DNS:${website_name}"
 
 if bashio::config.has_value 'san[]'; then
-    while read -r san_entry; do
+	san_list=$(bashio::config 'san')
+	for san_entry in $san_list; do
         # Accept fully-qualified entries (DNS:foo, IP:1.2.3.4) or auto-detect bare values
         if [[ "$san_entry" == DNS:* ]] || [[ "$san_entry" == IP:* ]]; then
             san_entries="${san_entries},${san_entry}"
