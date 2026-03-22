@@ -6,7 +6,7 @@
 
 Generate self-signed certificates for Homeassistant OS
 
-## About
+## About 
 
 This add-on uses OpenSSL to generate self-signed certificates and place them in the `/ssl` folder, making them accessible to other Home Assistant add-ons.
 
