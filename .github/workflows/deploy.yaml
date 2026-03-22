@@ -42,30 +42,25 @@ jobs:
         run: |
           git config pull.rebase false
           git pull origin master || true
+          
       - name: Update path_filters
-        run: |
-          # Init
-          echo "Starting"
-
-          # Go through all folders, add to filters if not existing
-          for f in $( find -- * -maxdepth 0 -type d | sort -r ); do
-            if [ -f "$f"/config.json ]; then
-
-              # Add to file
-              if ! grep "$f:" ".github/paths-filter.yml"; then
-                echo "$f: $f/config.*" >> ".github/paths-filter.yml"
+          run: |
+            # Init
+            echo "Starting"
+            # Go through all folders, add to filters if not existing
+            for f in $( find -- * -maxdepth 0 -type d | sort -r ); do
+              if [ -f "$f"/config.json ]; then
+                if ! grep -q "^$f:" ".github/paths-filter.yml"; then
+                  if [ "$(jq '.image' "$f/config.json")" != null ]; then
+                    echo "$f: $f/** # Image : yes" >> ".github/paths-filter.yml"
+                  else
+                    echo "$f: $f/config.*" >> ".github/paths-filter.yml"
+                  fi
+                fi
               fi
-
-              # Identify addons with true images
-              if [ "$(jq '.image' "$f/config.json")" != null ]; then
-                sed -i "/$f/ s/ # Image : yes//g" ".github/paths-filter.yml"
-                sed -i "/$f/ s/$/ # Image : yes/" ".github/paths-filter.yml"
-              fi
-            fi
-          done
-
-          # Sort yaml
-          sort -t= ".github/paths-filter.yml" -o ".github/paths-filter.yml"
+            done
+            # Sort yaml
+            sort -t= ".github/paths-filter.yml" -o ".github/paths-filter.yml"
       - name: Commit & Push
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
