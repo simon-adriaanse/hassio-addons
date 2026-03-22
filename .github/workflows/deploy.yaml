@@ -47,6 +47,7 @@ jobs:
         run: |
             # Init
             echo "Starting"
+            sed -i 's/\r//' .github/paths-filter.yml
             # Go through all folders, add to filters if not existing
             for f in $( find -- * -maxdepth 0 -type d | sort -r ); do
               if [ -f "$f"/config.json ]; then
