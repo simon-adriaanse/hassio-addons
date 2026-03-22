@@ -1,7 +1,7 @@
+ 
 #
 # Those are the addon path filters used in the workflows to determine which addon needs to be build.
 forgejo: forgejo/** # Image : yes
 nginx: nginx/** # Image : yes
 openssl: openssl/** # Image : yes
 wordpress: wordpress/** # Image : yes
- 
