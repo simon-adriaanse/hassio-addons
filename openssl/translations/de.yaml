@@ -1,0 +1,10 @@
+configuration:
+  website_name:
+    name: "Webseiten-Name (CN)"
+    description: "Der Common Name (CN), für den das Zertifikat ausgestellt werden soll."
+  log_level:
+    name: "Log Level"
+    description: "Steuert die Detailgenauigkeit der Protokolle."
+  san:
+    name: "Subject Alternative Names (SANs)"
+    description: "Zusätzliche Namen für das Zertifikat. Akzeptiert einfache Hostnamen/IPs (automatisch erkannt) oder vollständige Einträge wie DNS:example.com oder IP:192.168.1.1."

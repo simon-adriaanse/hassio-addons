@@ -1,0 +1,10 @@
+configuration:
+  website_name:
+    name: "Website Name (CN)"
+    description: "The Common Name (CN) for which the certificate should be issued."
+  log_level:
+    name: "Log Level"
+    description: "Controls the verbosity of the app logs."
+  san:
+    name: "Subject Alternative Names (SANs)"
+    description: "Additional names for the certificate. Accepts bare hostnames/IPs (auto-detected) or fully-qualified entries like DNS:example.com or IP:192.168.1.1."
