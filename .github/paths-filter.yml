@@ -4,3 +4,4 @@ forgejo: forgejo/** # Image : yes
 nginx: nginx/** # Image : yes
 openssl: openssl/config.* # Image : yes
 wordpress: wordpress/** # Image : yes
+openssl: openssl/** # Image : yes
