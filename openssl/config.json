@@ -1,6 +1,6 @@
 {
   "name": "OpenSSL",
-  "version": "1.0.1", 
+  "version": "1.0.2", 
   "slug": "openssl",
   "description": "Generate self-signed certificates",
   "url": "https://github.com/simon-adriaanse/hassio-addons/tree/master/openssl",
@@ -11,11 +11,11 @@
   "options": {
     "website_name": "",
     "log_level": "info",
-    "san": ""
+    "san": []
   },
   "schema": {
     "website_name": "str",
     "log_level": "list(trace|debug|info|notice|warning|error|fatal)",
-    "san": "str?"
+    "san": ["str?"]
   }
 }
