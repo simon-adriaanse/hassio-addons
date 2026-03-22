@@ -1,6 +1,6 @@
 {
   "name": "OpenSSL",
-  "version": "1.0.2", 
+  "version": "1.0.3", 
   "slug": "openssl",
   "description": "Generate self-signed certificates",
   "url": "https://github.com/simon-adriaanse/hassio-addons/tree/master/openssl",

@@ -186,7 +186,7 @@ VALID_DAYS=10000
 # Always include the CN as DNS SAN (required by modern TLS clients)
 san_entries="DNS:${website_name}"
 
-if bashio::config.has_value 'san'; then
+if bashio::config.has_value 'san[]'; then
     while read -r san_entry; do
         # Accept fully-qualified entries (DNS:foo, IP:1.2.3.4) or auto-detect bare values
         if [[ "$san_entry" == DNS:* ]] || [[ "$san_entry" == IP:* ]]; then
