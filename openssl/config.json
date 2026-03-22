@@ -15,12 +15,7 @@
   },
   "schema": {
     "website_name": "str",
-    "log_level": {
-      "name": "Log Level",
-      "description": "Controls the verbosity of the app logs.",
-      "required": true,
-      "type": "list(trace|debug|info|notice|warning|error|fatal)"
-    },
+    "log_level": "list(trace|debug|info|notice|warning|error|fatal)",
     "san": "str?"
   }
-} 
+}
