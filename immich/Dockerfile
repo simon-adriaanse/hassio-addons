@@ -2,7 +2,9 @@ FROM ghcr.io/immich-app/immich-machine-learning:release AS immich-ml
 FROM ghcr.io/immich-app/immich-server:release
 
 # Install PostgreSQL, Redis, and process supervision tools
-RUN apt-get update && apt-get install -y --no-install-recommends \
+RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates \
+    && update-ca-certificates \
+    && apt-get update && apt-get install -y --no-install-recommends \
     postgresql postgresql-client \
     redis-server \
     supervisor \
