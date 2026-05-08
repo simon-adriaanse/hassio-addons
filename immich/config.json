@@ -1,6 +1,6 @@
 {
   "name": "Immich",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "slug": "immich",
   "description": "High performance self-hosted photo and video management solution",
   "url": "https://github.com/simon-adriaanse/hassio-addons/tree/master/immich",
