@@ -10,7 +10,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy machine learning app from the ML image
-COPY --from=immich-ml /usr/src/app /usr/src/immich-ml
+COPY --from=immich-ml /usr/src/immich_ml /usr/src/immich-ml
 COPY --from=immich-ml /usr/local /usr/local-ml
 
 # Copy add-on scripts
