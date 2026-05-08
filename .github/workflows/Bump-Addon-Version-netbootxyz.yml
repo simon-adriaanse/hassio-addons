@@ -14,7 +14,7 @@ jobs:
     if: ${{ contains(github.event.head_commit.message, 'Update dependency netbootxyz/webapp') }}
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6.0.2
         with:
           lfs: "true"
           fetch-depth: 0
@@ -108,7 +108,7 @@ jobs:
           echo "🎉 Changelog update process completed successfully!"
 
       - name: Commit & Push
-        uses: stefanzweifel/git-auto-commit-action@v5
+        uses: stefanzweifel/git-auto-commit-action@v7.1.0
         with:
           commit_message: "Increment addon version due to netboot-xyz update"
 
