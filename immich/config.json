@@ -1,0 +1,30 @@
+{
+  "name": "Immich",
+  "version": "1.0.0",
+  "slug": "immich",
+  "description": "High performance self-hosted photo and video management solution",
+  "url": "https://github.com/simon-adriaanse/hassio-addons/tree/master/immich",
+  "arch": ["aarch64", "amd64"],
+  "image": "ghcr.io/simon-adriaanse/immich-{arch}",
+  "map": ["share:rw", "media:rw"],
+  "ingress": true,
+  "ingress_port": 2283,
+  "ingress_stream": true,
+  "init": false,
+  "panel_icon": "mdi:image-multiple",
+  "panel_title": "Immich",
+  "options": {
+    "log_level": "log",
+    "machine_learning": true
+  },
+  "schema": {
+    "log_level": "list(verbose|debug|log|warn|error)",
+    "machine_learning": "bool"
+  },
+  "ports": {
+    "2283/tcp": 2283
+  },
+  "ports_description": {
+    "2283/tcp": "Web interface (Not required for Ingress)"
+  }
+}
