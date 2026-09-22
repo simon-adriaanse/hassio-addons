@@ -13,7 +13,7 @@ RUN case "${BUILD_ARCH}" in \
         *) echo "Unsupported arch: ${BUILD_ARCH}" && exit 1 ;; \
     esac && \
     curl -sSLf -o /usr/local/bin/forgejo \
-        "https://codeberg.org/forgejo/forgejo/releases/download/v16.0.2/forgejo-16.0.2-linux-${FORGEJO_ARCH}" && \
+        "https://codeberg.org/forgejo/forgejo/releases/download/v16.0.5/forgejo-16.0.5-linux-${FORGEJO_ARCH}" && \
     chmod +x /usr/local/bin/forgejo
 
 # Create git user for Forgejo (UID/GID 1000)
